@@ -44,7 +44,8 @@ export const sendMail = async(to:string, url:string, txt:string) =>{
             from:sender_mail_id,
             to:to,
             subject:'BlogDev',
-            html:`<h1>Welcome to BlogWrite</h1> : <p>Your account is under process  </p> <hr> <p>Please click over the link to activate your account</p><br> "${process.env.URL_LINK}/api/activate/${url}"`
+            // html:`<h1>Welcome to BlogWrite</h1> : <p>Your account is under process  </p> <hr> <p>Please click over the link to activate your account</p><br> "${process.env.URL_LINK}/api/activate/${url}"`
+            html:`<h1>Welcome to BlogWrite</h1> : <p>Your account is under process  </p> <hr> <p>Please click over the link to activate your account</p><br> "${process.env.URL_LINK}/activate/${url}"`
         }
 
         await transport.sendMail(mailOption, (err: Error, info:any)=>{
