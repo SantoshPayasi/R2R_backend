@@ -6,11 +6,12 @@ import bcrypt from "bcrypt";
 import {
   generateAccessToken,
   generateActiveToken,
+  generateRefreshToken
 } from "../config/generateToken";
 import { sendMessage } from "../config/sendMessage";
 import { validateEmail, validateNumber } from "../middlewares/validate";
 import { sendMail } from "../config/sendMail";
-import { Itoken } from "../config/interface";
+import { IUser, Ideocdetoken, Itoken } from "../config/interface";
 dotenv.config();
 
 // Logic Section
@@ -87,7 +88,84 @@ const authController = {
       })
     }
   },
+
+  login:async(req:Request, res:Response)=>{
+    try {
+      const {account, password} = req.body
+      const user = await User.findOne({account})
+      if(!user){
+        return res.status(400).send(
+          {
+            msg:"User not found"
+          }
+        )
+      }
+     loginUser(user, password, res);
+    } catch (error:any) {
+      return res.status(500).send({msg: error.message})
+    }
+  }
+  ,
+  logOut:async(req:Request, res:Response)=>{
+     try {
+      res.clearCookie('refreshtoken', {path:`api/refreshToken`})
+      return res.status(200).send({msg:"Logged Out!"})
+      
+     } catch (error:any) {
+      res.status(500).send({msg:error.message})
+     }
+  }
+  ,
+  refreshtoken:async(req:Request, res:Response)=>{
+       try {
+              const {refreshtoken} = req.cookies
+              // console.log(refreshtoken)
+              if(!refreshtoken)return res.status(400).send("Please Login now!")
+              const decode = await <Ideocdetoken>jwt.verify(refreshtoken, `${process.env.REFRESH_TOKEN_SECRET}`); 
+              // console.log(decode)
+              if(!decode.id)return res.status(400).send("Please login Now!")
+              const user = await User.findById(decode.id).select("-password")
+              if(!user)return res.status(404).send({  msg: "User is does not exist" })
+
+              const accessToken = generateAccessToken({id:user._id})
+              res.status(200).send({
+                msg:"Access token created successfully",
+                token:accessToken
+              })
+       } catch (error:any) {
+          res.status(500).send({
+            msg:error.message
+          })
+       }
+  }
+
 };
+
+
+
+const loginUser = async(user:IUser, password:string, res:Response)=>{
+    const isMatch = await bcrypt.compare(password , user.password);
+    if(!isMatch)return res.status(500).send(
+      {
+        msg:"Ivalid user credintials"
+      }
+    )
+
+    const accessToken = generateAccessToken({id: user._id})
+    const refreshToken = generateRefreshToken({id:user._id})
+
+    res.cookie('refreshtoken', refreshToken, {
+      httpOnly:true,
+      path: `api/refreshToken`,
+      maxAge:30*24*60*60*1000 //30 days
+    })
+
+    res.status(200).send({
+      msg:'LoggedIn Successfully',
+      accessToken:accessToken,
+      user:{...user._doc, password:""}
+    })
+}
 
 
 export default authController;

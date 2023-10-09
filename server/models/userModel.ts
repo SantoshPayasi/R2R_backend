@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { IUser } from "../config/interface";
 
 const userSchema = new mongoose.Schema({
      name:{
@@ -35,4 +36,4 @@ const userSchema = new mongoose.Schema({
     timestamps:true
 })
 
-export default mongoose.model('User', userSchema)
+export default mongoose.model<IUser>('User', userSchema)
