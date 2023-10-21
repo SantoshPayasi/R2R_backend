@@ -18,7 +18,7 @@ const sendMessage = (to, body, text) => {
             .create({
             body: `R2R ${text} - ${body}`,
             from: `${process.env.TWILIO_ACCOUNT_NUMBER}`,
-            to: to
+            to: to,
         })
             .then((message) => console.log(message.sid));
     }

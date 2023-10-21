@@ -50,7 +50,8 @@ const sendMail = (to, url, txt) => __awaiter(void 0, void 0, void 0, function* (
             from: sender_mail_id,
             to: to,
             subject: 'BlogDev',
-            html: `<h1>Welcome to BlogWrite</h1> : <p>Your account is under process  </p> <hr> <p>Please click over the link to activate your account</p><br> "${process.env.URL_LINK}/api/activate/${url}"`
+            // html:`<h1>Welcome to BlogWrite</h1> : <p>Your account is under process  </p> <hr> <p>Please click over the link to activate your account</p><br> "${process.env.URL_LINK}/api/activate/${url}"`
+            html: `<h1>Welcome to BlogWrite</h1> : <p>Your account is under process  </p> <hr> <p>Please click over the link to activate your account</p><br> "${process.env.URL_LINK}/activate/${url}"`
         };
         yield transport.sendMail(mailOption, (err, info) => {
             if (info) {
