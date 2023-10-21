@@ -1,2 +1,1 @@
-mongodb+srv://R2R:<password>@cluster0.6t0b7wk.mongodb.net/R2R?retryWrites=true&w=majority
-qQAFrZ485XjXYYKs
+mongodb+srv://R2R:qQAFrZ485XjXYYKs@cluster0.6t0b7wk.mongodb.net/R2R?retryWrites=true&w=majority
